@@ -1,5 +1,6 @@
 import feedparser
 from flask import Flask
+from flask import render_template
 
 app = Flask(__name__)
 
@@ -25,10 +26,8 @@ rss_urls = {
 @app.route("/<publication>")
 def get_news(publication='bbc'):
     feed = feedparser.parse(rss_urls[publication])
-    first_article = feed['entries'][0]
-    return html_template.format(first_article.get('title'),
-                                first_article.get('published'),
-                                first_article.get('summary'))
+    return render_template('home.html',
+                           articles=feed['entries'])
 
 
 if __name__ == '__main__':

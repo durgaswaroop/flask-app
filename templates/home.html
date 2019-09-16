@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html>
+<body>
+<h1>Headlines</h1>
+{% for article in articles %}
+<b><a href={{article.link}}>{{article.title}}</a></b> <br/>
+<em>{{article.published}}</em> <br/>
+<p>{{article.summary}}</p> <br/>
+<hr/>
+{% endfor %}
+</body>
+</html>
