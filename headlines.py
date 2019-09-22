@@ -1,10 +1,12 @@
 import feedparser
 import json
 import requests
+import datetime
 
 from flask import Flask
 from flask import render_template
 from flask import request
+from flask import make_response
 
 app = Flask(__name__)
 
@@ -29,36 +31,39 @@ CURRENCY_API_URL = "https://openexchangerates.org//api/latest.json?app_id=" + CU
 @app.route("/")
 def home():
     # Get headlines
-    publication = request.args.get("publication")
-    if not publication:
-        publication = DEFAULTS['publication']
+    publication = get_value_with_fallback('publication')
     articles = get_news(publication)
 
     # Get weather
-    city = request.args.get('city')
-    if not city:
-        city = DEFAULTS['city']
+    city = get_value_with_fallback('city')
     weather = get_weather(city)
 
     # Get exchange rates
-    src_currency = request.args.get('src_currency')
-    dest_currency = request.args.get('dest_currency')
-
-    if not src_currency:
-        src_currency = DEFAULTS['src_currency']
-
-    if not dest_currency:
-        dest_currency = DEFAULTS['dest_currency']
+    src_currency = get_value_with_fallback('src_currency')
+    dest_currency = get_value_with_fallback('dest_currency')
 
     xchange_rate, currencies = get_rate(src_currency, dest_currency)
 
-    return render_template('home.html',
-                           articles=articles,
-                           weather=weather,
-                           src_currency=src_currency,
-                           dest_currency=dest_currency,
-                           xchange_rate=xchange_rate,
-                           currencies=sorted(currencies))
+    template = render_template('home.html', articles=articles, weather=weather, src_currency=src_currency,
+                               dest_currency=dest_currency, xchange_rate=xchange_rate,
+                               publications=sorted(RSS_FEEDS.keys()), currencies=sorted(currencies))
+    response = make_response(template)
+
+    # Set Cookies
+    expiry = datetime.datetime.now() + datetime.timedelta(days=30)
+    response.set_cookie("publication", publication, expires=expiry)
+    response.set_cookie("city", city, expires=expiry)
+    response.set_cookie("src_currency", src_currency, expires=expiry)
+    response.set_cookie("dest_currency", dest_currency, expires=expiry)
+    return response
+
+
+def get_value_with_fallback(key):
+    if request.args.get(key):
+        return request.args.get(key)
+    if request.cookies.get(key):
+        return request.cookies.get(key)
+    return DEFAULTS[key]
 
 
 def get_news(publication):
@@ -100,4 +105,4 @@ def get_rate(src_currency, dest_currency):
 
 
 if __name__ == '__main__':
-    app.run(port=5000, debug=True)
+    app.run(host='0.0.0.0', port=5000, debug=True)
