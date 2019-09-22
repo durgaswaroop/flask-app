@@ -1,47 +1,103 @@
 <!DOCTYPE html>
 <html>
-<body>
-<h1>Headlines</h1>
-<h2>Current Weather</h2>
-<form>
-    <input type="text" name="city" placeholder="Weather search">
-    <input type="submit" value="Submit">
-</form>
-<p>City: <b>{{weather.city}}, {{weather.country}}</b></p>
-<p>{{weather.description}} |{{weather.temperature}}℃</p>
-<h2>Currency</h2>
-<form>
-    FROM: <select name="src_currency">
-            {% for currency in currencies %}
-                <option value="{{currency}}" {{'selected="selected"' if src_currency==currency}}>{{currency}}</option>
-            {% endfor %}
-        </select>
+<head>
+    <style>
+        html {
+    font-family: "Helvetica";
+    background: white;
+}
 
-    TO: <select name="dest_currency">
-            {% for currency in currencies %}
-                <option value="{{currency}}" {{'selected="selected"' if dest_currency==currency}}>{{currency}}</option>
-            {% endfor %}
-        </select>
+body {
+    background: lightgrey;
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+#header {
+    padding-top: 5px;
+    background: lightsteelblue;
+}
+#inner-header {
+    padding-left: 10px;
+}
+#main{
+    padding-left: 10px;
+}
+input[type="text"], select {
+    color: grey;
+    border: 1px solid lightsteelblue;
+    height: 30px;
+    line-height: 15px;
+    margin: 2px 6px 16px 0px
+}
+input[type="submit"] {
+    padding: 5px 10px 5px 10px;
+    color: black;
+    background: lightsteelblue;
+    border: none;
+    box-shadow: 1px 1px 1px #4C6E91;
+}
+input[type="submit"]:hover {
+    background: steelblue;
+}
+
+
+    </style>
+</head>
+
+<body>
+<div id="header">
+    <div id="inner-header">
+        <h1>Headlines</h1>
+        <p>Headlines. Currency. Weather</p>
+        <hr/>
+    </div>
+</div>
+<div id="main">
+    <h2>Current Weather</h2>
+    <form>
+        <input type="text" name="city" placeholder="Weather search">
+        <input type="submit" value="Submit">
+    </form>
+    <p>City: <b>{{weather.city}}, {{weather.country}}</b></p>
+    <p>{{weather.description}} |{{weather.temperature}}℃</p>
+    <h2>Currency</h2>
+    <form>
+        FROM: <select name="src_currency">
+        {% for currency in currencies %}
+        <option value="{{currency}}" {{
+        'selected="selected"' if src_currency==currency}}>{{currency}}</option>
+        {% endfor %}
+    </select>
+
+        TO: <select name="dest_currency">
+        {% for currency in currencies %}
+        <option value="{{currency}}" {{
+        'selected="selected"' if dest_currency==currency}}>{{currency}}</option>
+        {% endfor %}
+    </select>
 
         <input type="submit" value="Submit">
-</form>
-1 {{src_currency}} = {{xchange_rate}} {{dest_currency}}
-<h2>Headlines</h2>
-<form>
-    PUBLICATION: <select name="publication">
-                    {% for _publication in publications %}
-                    <option value="{{_publication}}" {{'selected="selected"' if publication==_publication}}>{{_publication}}</option>
-                    {% endfor %}
-                 </select>
-    <!--<input type="text" name="publication" placeholder="search">-->
-    <input type="submit" value="submit">
-</form>
-<br/>
-{% for article in articles %}
-<b><a href={{article.link}}>{{article.title}}</a></b> <br/>
-<em>{{article.published}}</em> <br/>
-<p>{{article.summary}}</p> <br/>
-<hr/>
-{% endfor %}
+    </form>
+    1 {{src_currency}} = {{xchange_rate}} {{dest_currency}}
+    <h2>Headlines</h2>
+    <form>
+        PUBLICATION: <select name="publication">
+        {% for _publication in publications %}
+        <option value="{{_publication}}" {{
+        'selected="selected"' if publication==_publication}}>{{_publication}}</option>
+        {% endfor %}
+    </select>
+        <!--<input type="text" name="publication" placeholder="search">-->
+        <input type="submit" value="Submit">
+    </form>
+    <br/>
+    {% for article in articles %}
+    <b><a href={{article.link}}>{{article.title}}</a></b> <br/>
+    <em>{{article.published}}</em> <br/>
+    <p>{{article.summary}}</p> <br/>
+    <hr/>
+    {% endfor %}
+</div>
 </body>
 </html>
